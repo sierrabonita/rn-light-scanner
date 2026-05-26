@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "rn-light-scanner",
+    "name": "かんたんスキャナー",
     "slug": "rn-light-scanner",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,7 +8,10 @@
     "scheme": "rnlightscanner",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "infoPlist": {
+        "NSCameraUsageDescription": "書類をスキャンするためにカメラを使用します。"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -17,6 +20,7 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "permissions": ["android.permission.CAMERA"],
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -33,6 +37,13 @@
             "image": "./assets/images/splash-icon.png",
             "imageWidth": 76
           }
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "スキャンした画像を写真フォルダに保存します。",
+          "savePhotosPermission": "スキャンした画像を写真フォルダに保存します。"
         }
       ]
     ],

@@ -1,98 +1,92 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import * as MediaLibrary from 'expo-media-library';
+import { Asset } from 'expo-media-library';
+import { useState } from 'react';
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import DocumentScanner from 'react-native-document-scanner-plugin';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+export default function Index() {
+  const [scannedImage, setScannedImage] = useState<string | null>(null);
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+  const startScan = async () => {
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+
+      if (status !== 'granted') {
+        Alert.alert('エラー', '写真フォルダへの合うセス権限が必要です');
+        return;
+      }
+
+      const { scannedImages } = await DocumentScanner.scanDocument({ maxNumDocuments: 1 });
+
+      if (scannedImages && scannedImages.length > 0) {
+        const imageUri = scannedImages[0];
+        setScannedImage(imageUri);
+
+        await Asset.create(imageUri);
+
+        Alert.alert('成功', '歪み補正された画像が写真フォルダに保存されました！');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('エラー', 'スキャンまたは保存中にエラーが発生しました。');
+    }
+  };
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
-
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+    <View style={styles.container}>
+      <Text style={styles.title}>自作書類スキャナー</Text>
+      <TouchableOpacity style={styles.button} onPress={startScan}>
+        <Text style={styles.buttonText}>スキャンを開始</Text>
+      </TouchableOpacity>
+      {scannedImage && (
+        <View style={styles.previewContainer}>
+          <Text style={styles.previewText}>直近のスキャン結果:</Text>
+          <Image source={{ uri: scannedImage }} style={styles.previewImage} />
+        </View>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    padding: 20,
   },
   title: {
-    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 40,
   },
-  code: {
-    textTransform: 'uppercase',
+  button: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  previewContainer: {
+    marginTop: 40,
+    alignItems: 'center',
+  },
+  previewText: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: '#666',
+  },
+  previewImage: {
+    width: 200,
+    height: 280,
+    resizeMode: 'contain',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
 });
