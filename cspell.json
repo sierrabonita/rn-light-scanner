@@ -1,0 +1,18 @@
+{
+  "version": "0.2",
+  "ignorePaths": [],
+  "dictionaryDefinitions": [],
+  "dictionaries": [],
+  "words": [
+    "Maru",
+    "Nativewind",
+    "Pressable",
+    "rnlightscanner",
+    "srgb",
+    "Tamagui",
+    "unistyles",
+    "worklets"
+  ],
+  "ignoreWords": [],
+  "import": []
+}
