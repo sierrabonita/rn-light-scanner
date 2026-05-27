@@ -12,7 +12,7 @@ export default function Index() {
       const { status } = await MediaLibrary.requestPermissionsAsync();
 
       if (status !== 'granted') {
-        Alert.alert('エラー', '写真フォルダへの合うセス権限が必要です');
+        Alert.alert('Error', 'Permission required to access Photos.');
         return;
       }
 
@@ -24,23 +24,23 @@ export default function Index() {
 
         await Asset.create(imageUri);
 
-        Alert.alert('成功', '歪み補正された画像が写真フォルダに保存されました！');
+        Alert.alert('Success', 'Corrected image saved to Photos!');
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('エラー', 'スキャンまたは保存中にエラーが発生しました。');
+      Alert.alert('Error', 'An error occurred while scanning or saving.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>自作書類スキャナー</Text>
+      <Text style={styles.title}>Simple Scanner</Text>
       <TouchableOpacity style={styles.button} onPress={startScan}>
-        <Text style={styles.buttonText}>スキャンを開始</Text>
+        <Text style={styles.buttonText}>Start Scan</Text>
       </TouchableOpacity>
       {scannedImage && (
         <View style={styles.previewContainer}>
-          <Text style={styles.previewText}>直近のスキャン結果:</Text>
+          <Text style={styles.previewText}>Recent Scans:</Text>
           <Image source={{ uri: scannedImage }} style={styles.previewImage} />
         </View>
       )}
