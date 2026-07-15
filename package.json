@@ -5,9 +5,14 @@
   "private": true,
   "scripts": {
     "start": "expo start",
+    "start:clear": "expo start --clear",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "ios:17pro": "expo run:ios --simulator \"iPhone 17 Pro\"",
+    "ios:device": "expo run:ios --device",
+    "ios:clean": "expo run:ios --clear-cache",
+    "clean:all": "watchman watch-del-all && rm -rf node_modules && npm install",
     "web": "expo start --web",
     "lint": "expo lint",
     "format": "biome format --write ."
